@@ -1,0 +1,32 @@
+/* input {
+    border: 2px solid currentcolor;
+  }
+  input:invalid {
+    border: 2px dashed #ff0000;
+  }
+  input:invalid:focus {
+    background-image: linear-gradient(pink, red);
+  } */
+
+  input:invalid {
+    border: 2px dashed red;
+  }
+  input:invalid:focus {
+    background-image: linear-gradient(rgb(255, 192, 203), rgba(241, 72, 72, 0.789));
+  }
+  .blink {
+    animation: blinker 1.5s linear infinite;
+    color: red;
+    font-family: sans-serif;
+}
+@keyframes blinker {
+    50% {
+        opacity: 0;
+    }
+}
+
+
+*{
+  font-family: 'Patua One', cursive;
+}
+
