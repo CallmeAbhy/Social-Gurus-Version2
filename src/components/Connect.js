@@ -7,7 +7,7 @@ import Nav_Agencies from "./Nav_Agencies";
 import NavBar2 from "./NavBar2";
 import Footer from "./Footer";
 
-
+const socket = io("");
 function Connect() {
   const [username, setUsername] = useState("");
   const [room,setRoom] = useState("")
@@ -52,7 +52,7 @@ function Connect() {
 :
 
 
-    <Speak socket={ ""} username={username} room={room} />
+    <Speak socket={ socket} username={username} room={room} />
 
 
   }
