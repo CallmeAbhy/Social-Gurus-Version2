@@ -1,19 +1,21 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import Nav_Experts from "./Nav_Experts";
+import NavBar3 from "./NavBar3";
 import "./Connect_Emp.css";
 import "./Speak.css";
+// import Conversations from './Chat-Sections/Conversations'
+import Sms from "./Chat-Sections/Sms";
 import ScrollToBottom from "react-scroll-to-bottom";
-import Nav_Agencies from "./Nav_Agencies";
-import NavBar2 from "./NavBar2";
-import Footer from "./Footer";
-import { useEffect } from "react";
+import { useRef } from "react";
 import axios from "axios";
-import Input_footer from "./Input_footer";
 import { format } from "timeago.js";
 
-function Connect({ socket }) {
-  // Use State
+import Footer from "./Footer";
+import Input_footer from "./Input_footer";
+export const Connect_Emp = ({ socket }) => {
+  // Use States
+  const [empid, setEmpid] = useState("");
   const [conversations, setConversations] = useState([]);
-  const [client, setClient] = useState();
   const [newList, setNewList] = useState([]);
 
   useEffect(() => {
@@ -39,15 +41,17 @@ function Connect({ socket }) {
     };
   }, []);
 
+  console.log("This is new list here", newList);
+
   console.log("See watch Acctually there in Conversations", conversations);
 
-  const userid = localStorage.getItem("email_client");
+  let userid = localStorage.getItem("email_Employee");
   useEffect(() => {
     axios
-      .get(`http://100.25.193.158:4000/client/find/?email=${userid}`)
+      .get(`http://100.25.193.158:4000/employee/find/?email=${userid}`)
       .then((response) => {
         console.log(response);
-        setClient(response.data.id);
+        setEmpid(response.data.id);
       })
       .catch((err) => {
         console.log(err);
@@ -55,9 +59,9 @@ function Connect({ socket }) {
   }, []);
 
   return (
-    <>
-      <Nav_Agencies />
-      <NavBar2 />
+    <div>
+      <Nav_Experts />
+      <NavBar3 />
 
       <div className="messenger">
         <div className="chatMenu">
@@ -104,10 +108,10 @@ function Connect({ socket }) {
                       <div className="message">
                         <div>
                           <div className="message-content">
-                            <p>{msg.message}</p>
+                            <p>{msg.content.message}</p>
                           </div>
                           <div className="message-meta">
-                            <p>{format(msg.timestamp)}</p>
+                            <p>{format(msg.content.timestamp)}</p>
                           </div>
                         </div>
                       </div>
@@ -125,8 +129,8 @@ function Connect({ socket }) {
       </div>
 
       <Footer />
-    </>
+    </div>
   );
-}
+};
 
-export default Connect;
+export default Connect_Emp;
