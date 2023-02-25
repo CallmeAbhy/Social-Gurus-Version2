@@ -8,6 +8,9 @@ const Input_footer = (props) => {
   const [clied, setClied] = useState("");
   const [messageList, setMessageList] = useState([]);
 
+  let sender = props.login;
+  let customer = props.receiver;
+
   let userid = localStorage.getItem("email_Employee");
   let clid = localStorage.getItem("email_client");
   useEffect(() => {
@@ -38,14 +41,15 @@ const Input_footer = (props) => {
     e.preventDefault();
     if (newMessage !== "") {
       let messageData = {
-        employeeId: empid,
-        clientId: clied,
+        from: sender,
+        to: customer,
         message: newMessage,
-        roomId: empid.toString() + clied.toString(),
+        roomId: customer.toString() + sender.toString(),
         timestamp: new Date().toISOString(),
       };
 
       props.socket.emit("newMessage", messageData);
+      console.log(messageData);
 
       setMessageList((list) => [...list, messageData]);
 
