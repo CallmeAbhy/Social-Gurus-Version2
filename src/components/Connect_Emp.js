@@ -9,43 +9,24 @@ import ScrollToBottom from "react-scroll-to-bottom";
 import { useRef } from "react";
 import axios from "axios";
 import { format } from "timeago.js";
-
+import { useParams } from "react-router-dom";
+import URLSearchParams from "url-search-params";
 import Footer from "./Footer";
 import Input_footer from "./Input_footer";
-export const Connect_Emp = ({ socket }) => {
+export const Connect_Emp = (props) => {
   // Use States
-  const [empid, setEmpid] = useState("");
+  const [empid, setEmpid] = useState();
   const [conversations, setConversations] = useState([]);
-  const [newList, setNewList] = useState([]);
+  const [client, setClient] = useState();
+  console.log("Window Location", window.location);
+  const myKeyValue = window.location.search;
+  const urlParams = new URLSearchParams(myKeyValue);
 
-  useEffect(() => {
-    socket.on("connect", () => {
-      console.log("Connected");
-      socket.emit("joinRoom", "61");
-    });
-
-    socket.on("newMessage", (data) => {
-      setConversations((list) => [...list, data]);
-    });
-
-    socket.on("disconnect", () => {
-      console.log("Not Connected");
-      socket.emit("leaveRoom", "61");
-    });
-
-    return () => {
-      socket.off("connect");
-      socket.off("disconnect");
-      socket.off("joinRoom");
-      socket.off("leaveRoom");
-    };
-  }, []);
-
-  console.log("This is new list here", newList);
-
-  console.log("See watch Acctually there in Conversations", conversations);
+  const param1 = urlParams.get("client");
+  console.log("The value of client", param1);
 
   let userid = localStorage.getItem("email_Employee");
+
   useEffect(() => {
     axios
       .get(`http://100.25.193.158:4000/employee/find/?email=${userid}`)
@@ -57,6 +38,36 @@ export const Connect_Emp = ({ socket }) => {
         console.log(err);
       });
   }, []);
+
+  let str1 = String(empid) + String(param1);
+  console.log(str1);
+  let pass = parseInt(param1);
+
+  useEffect(() => {
+    props.socket.on("connect", () => {
+      console.log("Connected");
+      props.socket.emit("joinRoom", str1);
+    });
+
+    props.socket.on("newMessage", (data) => {
+      console.log("This is the data", data);
+      setConversations((list) => [...list, data]);
+    });
+
+    props.socket.on("disconnect", () => {
+      console.log("Not Connected");
+      props.socket.emit("leaveRoom", str1);
+    });
+
+    return () => {
+      props.socket.off("connect");
+      props.socket.off("disconnect");
+      props.socket.off("joinRoom");
+      props.socket.off("leaveRoom");
+    };
+  }, []);
+
+  console.log("See watch Acctually there in Conversations", conversations);
 
   return (
     <div>
@@ -105,7 +116,10 @@ export const Connect_Emp = ({ socket }) => {
                     console.log("The data in a map will be :", msg);
 
                     return (
-                      <div className="message">
+                      <div
+                        className="message"
+                        id={msg.content.from === empid ? "You" : "other"}
+                      >
                         <div>
                           <div className="message-content">
                             <p>{msg.content.message}</p>
@@ -122,7 +136,11 @@ export const Connect_Emp = ({ socket }) => {
             </div>
 
             <div className="chat__footer">
-              <Input_footer socket={socket} />
+              <Input_footer
+                socket={props.socket}
+                login={empid}
+                receiver={pass}
+              />
             </div>
           </div>
         </div>
